@@ -21,9 +21,10 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    # path('home', include('Home.urls', namespace = 'Home')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('accounts/', include('allauth.urls')),
+    # path('home', include('product.urls', namespace = 'home')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('accounts.urls', namespace='accounts')),
     path('admin/', admin.site.urls),
     path('products/', include('product.urls' , namespace='products')),
 ]

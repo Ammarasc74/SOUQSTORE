@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 from django.urls import reverse
+from django.conf import settings
 # from django.core.urlresolvers import reverse
 
 class Product(models.Model):
@@ -30,10 +31,47 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('products:product_detail', kwargs={'slug': self.PRDSLug})
 
-
-
     def __str__(self):
         return self.PRDName
+
+class ProductOrder(models.Model):
+    item = models.ForeignKey(Product, on_delete=models.CASCADE)
+    
+    slug = models.SlugField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("ProductOrder")
+        verbose_name_plural = _("ProductOrders")
+
+    def __str__(self):
+        return str(self.PRDName)
+
+    # def get_absolute_url(self):
+    #     return reverse("ProductOrder_detail", kwargs={'slug': self.slug})
+
+
+class Order(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+        
+    items = models.ManyToManyField(ProductOrder)
+    start_date = models.DateTimeField(auto_now_add=True)
+    ordered_date = models.DateTimeField()
+    ordered = models.BooleanField(default=False)
+    
+
+    class Meta:
+        verbose_name = _("Order")
+        verbose_name_plural = _("Orders")
+
+    def __str__(self):
+        return self.user.username
+
+    # def get_absolute_url(self):
+    #     return reverse("Order_detail", kwargs={"pk": self.pk})
+
+
+
 
 class ProductImage(models.Model):
     PRDIProduct = models.ForeignKey(Product , on_delete=models.CASCADE , verbose_name=_("Product"))
@@ -41,6 +79,7 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return str(self.PRDIProduct)
+
 
 class Category(models.Model): #table 
     CATName = models.CharField(max_length=50,verbose_name=_("Category Name")) #column
@@ -59,8 +98,6 @@ class Category(models.Model): #table
         return self.CATName
 
 
-
-
 class Product_Alternative(models.Model):
     PALNProduct = models.ForeignKey(Product , on_delete=models.CASCADE , related_name='main_product' , verbose_name=_("Product"))
     PALNAlternatives = models.ManyToManyField(Product , related_name='alternative_products'  , verbose_name=_("Alternatives"))
@@ -72,7 +109,6 @@ class Product_Alternative(models.Model):
 
     def __str__(self):
         return str(self.PALNProduct)
-
 
 
 class Product_Accessories(models.Model):
