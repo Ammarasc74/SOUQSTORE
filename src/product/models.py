@@ -6,22 +6,22 @@ from django.conf import settings
 # from django.core.urlresolvers import reverse
 
 class Product(models.Model):
-    PRDName = models.CharField(max_length=50,verbose_name=_("Product Name "))
-    PRDCategory = models.ForeignKey('Category',on_delete=models.CASCADE,verbose_name=_("Product Category"), blank=True , null=True)
-    PRDBrand = models.ForeignKey('settings.Brand',on_delete=models.CASCADE,verbose_name=_("Product Brand"), blank=True , null=True)
-    PRDDesc = models.TextField(max_length=1000,verbose_name=_("Description"))
-    PRDImage = models.ImageField(upload_to='product/' , verbose_name=_("Image"), blank=True , null=True)
-    PRDCreated = models.DateTimeField(auto_now=True,verbose_name=_("Created At"))
-    PRDPrice = models.DecimalField(max_digits=5 , decimal_places=2 ,verbose_name=_("Price"))
-    PRDDiscountPrice = models.DecimalField(max_digits=5 , decimal_places=2 ,verbose_name=_("Discount Price"))
-    PRDCost = models.DecimalField(max_digits=5, decimal_places=2,verbose_name=_("Cost"))
-    PRDSLug = models.SlugField(blank=True, null=True , verbose_name=_("Product URL"))
-    PRDISNew = models.BooleanField(default=True , verbose_name=_("New Product "))
-    PRDISBestSeller = models.BooleanField(default=False , verbose_name=_("Best Sale"))
+    name = models.CharField(max_length=50,verbose_name=_("Product Name "))
+    category = models.ForeignKey('Category',on_delete=models.CASCADE,verbose_name=_("Product Category"), blank=True , null=True)
+    brand = models.ForeignKey('settings.Brand',on_delete=models.CASCADE,verbose_name=_("Product Brand"), blank=True , null=True)
+    desc = models.TextField(max_length=1000,verbose_name=_("Description"))
+    image = models.ImageField(upload_to='product/' , verbose_name=_("Image"), blank=True , null=True)
+    created = models.DateTimeField(auto_now=True,verbose_name=_("Created At"))
+    price = models.DecimalField(max_digits=5 , decimal_places=2 ,verbose_name=_("Price"))
+    discountprice = models.DecimalField(max_digits=5 , decimal_places=2 ,verbose_name=_("Discount Price"))
+    cost = models.DecimalField(max_digits=5, decimal_places=2,verbose_name=_("Cost"))
+    slug = models.SlugField(blank=True, null=True , verbose_name=_("Product URL"))
+    newproduct = models.BooleanField(default=True , verbose_name=_("New Product "))
+    bestseller = models.BooleanField(default=False , verbose_name=_("Best Sale"))
 
     def save(self , *args , **kwargs):
-        if not self.PRDSLug : 
-            self.PRDSLug = slugify(self.PRDName)
+        if not self.slug : 
+            self.slug = slugify(self.name)
         super(Product , self).save(*args , **kwargs)
 
     class Meta:
@@ -29,14 +29,14 @@ class Product(models.Model):
         verbose_name_plural = _("Products")
 
     def get_absolute_url(self):
-        return reverse('products:product_detail', kwargs={'slug': self.PRDSLug})
+        return reverse('products:product_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
-        return self.PRDName
+        return self.name
+
 
 class ProductOrder(models.Model):
     item = models.ForeignKey(Product, on_delete=models.CASCADE)
-    
     slug = models.SlugField(blank=True, null=True)
 
     class Meta:
@@ -58,7 +58,7 @@ class Order(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     ordered_date = models.DateTimeField()
     ordered = models.BooleanField(default=False)
-    
+    slug = models.SlugField(blank=True, null=True)
 
     class Meta:
         verbose_name = _("Order")
@@ -71,23 +71,24 @@ class Order(models.Model):
     #     return reverse("Order_detail", kwargs={"pk": self.pk})
 
 
-
-
 class ProductImage(models.Model):
-    PRDIProduct = models.ForeignKey(Product , on_delete=models.CASCADE , verbose_name=_("Product"))
-    PRDIImage = models.ImageField(upload_to='product/' , verbose_name=_("Image"))
+    product = models.ForeignKey(Product , on_delete=models.CASCADE , verbose_name=_("Product"))
+    productimage = models.ImageField(upload_to='product/' , verbose_name=_("Image"))
 
     def __str__(self):
-        return str(self.PRDIProduct)
+        return str(self.product)
 
 
 class Category(models.Model): #table 
-    CATName = models.CharField(max_length=50,verbose_name=_("Category Name")) #column
-    CATParent = models.ForeignKey('self',limit_choices_to={'CATParent__isnull':True}, on_delete=models.CASCADE, blank=True , null=True,verbose_name=_("Category Parent Name"))
-    CATDesc = models.TextField(max_length=1000,verbose_name=_("Description"), blank=True , null=True)
-    CATDImg = models.ImageField(upload_to='category/',verbose_name=_("Image"), blank=True , null=True)
-    
+    name = models.CharField(max_length=50,verbose_name=_("Category Name")) #column
+    parent = models.ForeignKey('self',limit_choices_to={'parent__isnull':True}, on_delete=models.CASCADE, blank=True , null=True,verbose_name=_("Category Parent Name"))
+    desc = models.TextField(max_length=1000,verbose_name=_("Description"), blank=True , null=True)
+    categoryimge = models.ImageField(upload_to='category/',verbose_name=_("Image"), blank=True , null=True)
+    slug = models.SlugField(blank=True, null=True)
 
+    def save(self,*args,**kwargs):
+        self.slug = slugify(self.name)
+        super(Category,self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Category")
@@ -95,12 +96,12 @@ class Category(models.Model): #table
 
 
     def __str__(self):
-        return self.CATName
+        return self.name
 
 
 class Product_Alternative(models.Model):
-    PALNProduct = models.ForeignKey(Product , on_delete=models.CASCADE , related_name='main_product' , verbose_name=_("Product"))
-    PALNAlternatives = models.ManyToManyField(Product , related_name='alternative_products'  , verbose_name=_("Alternatives"))
+    alternativeproduct = models.ForeignKey(Product , on_delete=models.CASCADE , related_name='main_product' , verbose_name=_("Product"))
+    alternatives = models.ManyToManyField(Product , related_name='alternative_products'  , verbose_name=_("Alternatives"))
     
 
     class Meta:
@@ -108,19 +109,23 @@ class Product_Alternative(models.Model):
         verbose_name_plural = _("Product Alternatives")
 
     def __str__(self):
-        return str(self.PALNProduct)
+        return str(self.alternativeproduct)
 
 
 class Product_Accessories(models.Model):
-    PACCProduct = models.ForeignKey(Product , on_delete=models.CASCADE , related_name='mainAccessory_product' , verbose_name=_("Product"))
-    PACCAlternatives = models.ManyToManyField(Product , related_name='accessories_products' , verbose_name=_("Accessories"))
-    
+    accessoriesproduct = models.ForeignKey(Product , on_delete=models.CASCADE , related_name='mainAccessory_product' , verbose_name=_("Accessories"))
+    accessoriesalternatives = models.ManyToManyField(Product , related_name='accessories_products' , verbose_name=_("Products"))
+    slug = models.SlugField(blank=True, null=True)
+
+    def save(self,*args,**kwargs):
+        self.slug = slugify(self.accessoriesproduct)
+        super(Product_Accessories,self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Accessory")
         verbose_name_plural = _("Accessorios")
 
     def __str__(self):
-        return str(self.PACCProduct)
+        return str(self.accessoriesproduct)
 
     

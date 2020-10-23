@@ -5,8 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Brand(models.Model):
-    BRName = models.CharField(max_length=50)
-    BRDesc = models.TextField(blank=True,null=True)
+    name = models.CharField(max_length=50)
+    desc = models.TextField(blank=True,null=True)
     
 
     class Meta:
@@ -14,11 +14,11 @@ class Brand(models.Model):
         verbose_name_plural = _("Brands")
 
     def __str__(self):
-        return self.BRName
+        return self.name
 
 class Variant(models.Model):
-    VARName = models.CharField(max_length=50)
-    VARDesc = models.TextField(blank=True,null=True)
+    name = models.CharField(max_length=50)
+    desc = models.TextField(blank=True,null=True)
     
 
     class Meta:
@@ -26,5 +26,5 @@ class Variant(models.Model):
         verbose_name_plural = _("Variants")
 
     def __str__(self):
-        return self.VARName
+        return self.name
 

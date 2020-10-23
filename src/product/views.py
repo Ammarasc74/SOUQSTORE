@@ -12,7 +12,7 @@ from .models import Product
 
 def product_list(request):
     product_list = Product.objects.all()
-    paginator = Paginator(product_list, 2) 
+    paginator = Paginator(product_list, 4) 
 
     page = request.GET.get('page')
     product_list = paginator.get_page(page)

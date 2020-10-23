@@ -21,12 +21,23 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('accounts/', include('allauth.urls')),
-    # path('home', include('product.urls', namespace = 'home')),
-    # path('accounts/', include('django.contrib.auth.urls')),
-    # path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('', include('accounts.urls', namespace='accounts')),
+    # path('rest-auth/', include('rest_auth.urls')),
+    # path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('', include('product.urls', namespace='products')),
     path('admin/', admin.site.urls),
-    path('products/', include('product.urls' , namespace='products')),
+    
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+
+
+# path('accounts/', include('allauth.urls')),
+    # path('home', include('product.urls', namespace = 'home')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('accounts.urls', namespace='accounts')),
+    # path('api-auth/', include('rest_framework.urls')),
+    # path('products/', include('product.urls' , namespace='products')),

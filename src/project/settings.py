@@ -38,15 +38,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+     ## auth rest api Apps :
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+
     'django.contrib.sites',
     'allauth',
     'allauth.account',
+    'rest_auth.registration',
+
     'allauth.socialaccount',
-    ## My Apps :
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.twitter',
+    
+    # my apps : 
+   
     'product',
     'bootstrap4',
     'django_countries',
     'settings',
+    'knox',
+    'django_rest_passwordreset',
     
 ]
 
@@ -58,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware'
 ]
 
 ROOT_URLCONF = 'project.urls'
